@@ -18,7 +18,7 @@
 # (to make gems behave if necessary).
 
 { lib, fetchurl, writeScript, ruby, kerberos, libxml2, libxslt, python, stdenv, which
-, libiconv, postgresql, v8_3_16_14, clang, sqlite, zlib, imagemagick
+, libiconv, postgresql, v8, clang, sqlite, zlib, imagemagick
 , pkgconfig , ncurses, xapian_1_2_22, gpgme, utillinux, fetchpatch, tzdata, icu, libffi
 , cmake, libssh2, openssl, mysql, darwin, git, perl, pcre, gecode_3, curl
 , msgpack, qt59, libsodium, snappy, libossp_uuid, lxc, libpcap, xorg, gtk2, buildRubyGem
@@ -27,8 +27,6 @@
 }@args:
 
 let
-  v8 = v8_3_16_14;
-
   rainbow_rake = buildRubyGem {
     pname = "rake";
     gemName = "rake";
@@ -235,6 +233,22 @@ in
     preInstall = ''
       export HOME=$TMPDIR
     '';
+  };
+
+  mini_racer = attrs: {
+    buildInputs = [ v8 ];
+
+    # NOTE: while testing for available headers,
+    # v8.h includes <memory> which is C++ syntax,
+    # but conftest.c is .c not .cc, hence -x c++ must be supplied to gcc.
+    # I can't find a simpler way than patching extconf.rb to add it;
+    # passing it to gem through buildFlags or CXXFLAGS is not working.
+    # SEE: https://www.ruby-forum.com/t/explicitly-setting-compiler-to-c-in-extconf-rb/208668/9
+    patchPhase = ''
+      sed -i ./ext/mini_racer_extension/extconf.rb \
+          -e 's/^\$CPPFLAGS += " -std=c++0x"/$CPPFLAGS += " -x c++"\n\0/'
+    '';
+    dontBuild = false; # NOTE: enable patchPhase
   };
 
   msgpack = attrs: {

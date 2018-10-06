@@ -171,6 +171,8 @@ in
 
   dispad = callPackage ../tools/X11/dispad { };
 
+  discourse = callPackage ../servers/mail/discourse { };
+
   dump1090 = callPackage ../applications/misc/dump1090 { };
 
   ebook2cw = callPackage ../applications/misc/ebook2cw { };
