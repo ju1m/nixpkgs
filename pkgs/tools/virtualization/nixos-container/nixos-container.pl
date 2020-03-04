@@ -43,6 +43,7 @@ Usage: nixos-container list
          [--config <string>]
          [--config-file <path>]
          [--flake <flakeref>]
+         [--nixos-path <path>]
        nixos-container login <container-name>
        nixos-container root-login <container-name>
        nixos-container run <container-name> -- args...
@@ -90,7 +91,7 @@ my $action = $ARGV[0] or die "$0: no action specified\n";
 
 if (defined $configFile and defined $extraConfig) {
     die "--config and --config-file are mutually incompatible. " .
-        "Please define on or the other, but not both";
+        "Please define one or the other, but not both";
 }
 
 if (defined $flake && $flake =~ /^(.*)#([^#"]+)$/) {
@@ -147,6 +148,16 @@ sub buildFlake {
         or die "$0: failed to build container from flake '$flake'\n";
     $systemPath = readlink("$systemPath.tmp") or die;
     unlink("$systemPath.tmp");
+}
+
+sub clearContainerState {
+    my ($profileDir, $gcRootsDir, $root, $configFile) = @_;
+
+    safeRemoveTree($profileDir) if -e $profileDir;
+    safeRemoveTree($gcRootsDir) if -e $gcRootsDir;
+    system("chattr", "-i", "$root/var/empty") if -e "$root/var/empty";
+    safeRemoveTree($root) if -e $root;
+    unlink($configFile) or die;
 }
 
 if ($action eq "create") {
@@ -226,7 +237,10 @@ if ($action eq "create") {
 
     if (defined $systemPath) {
         system("nix-env", "-p", "$profileDir/system", "--set", $systemPath) == 0
-            or die "$0: failed to set initial container configuration\n";
+            or do {
+                clearContainerState($profileDir, "$profileDir/$containerName", $root, $confFile);
+                die "$0: failed to set initial container configuration\n";
+            };
     } else {
         mkpath("$root/etc/nixos", 0, 0755);
 
@@ -237,7 +251,10 @@ if ($action eq "create") {
         system("nix-env", "-p", "$profileDir/system",
                "-I", "nixos-config=$nixosConfigFile", "-f", "$nixenvF",
                "--set", "-A", "system") == 0
-            or die "$0: failed to build initial container configuration\n";
+            or do {
+                clearContainerState($profileDir, "$profileDir/$containerName", $root, $confFile);
+                die "$0: failed to build initial container configuration\n"
+            };
     }
 
     print "$containerName\n" if $ensureUniqueName;
@@ -331,11 +348,7 @@ if ($action eq "destroy") {
 
     terminateContainer if (isContainerRunning);
 
-    safeRemoveTree($profileDir) if -e $profileDir;
-    safeRemoveTree($gcRootsDir) if -e $gcRootsDir;
-    system("chattr", "-i", "$root/var/empty") if -e "$root/var/empty";
-    safeRemoveTree($root) if -e $root;
-    unlink($confFile) or die;
+    clearContainerState($profileDir, $gcRootsDir, $root, $confFile);
 }
 
 elsif ($action eq "restart") {
@@ -374,6 +387,7 @@ elsif ($action eq "update") {
         system("nix-env", "-p", "$profileDir/system", "--set", $systemPath) == 0
             or die "$0: failed to set container configuration\n";
     } else {
+
         my $nixosConfigFile = "$root/etc/nixos/configuration.nix";
 
         # FIXME: may want to be more careful about clobbering the existing
@@ -383,8 +397,9 @@ elsif ($action eq "update") {
             writeNixOSConfig $nixosConfigFile;
         }
 
+        my $nixenvF = $nixosPath // "<nixpkgs/nixos>";
         system("nix-env", "-p", "$profileDir/system",
-               "-I", "nixos-config=$nixosConfigFile", "-f", "<nixpkgs/nixos>",
+               "-I", "nixos-config=$nixosConfigFile", "-f", $nixenvF,
                "--set", "-A", "system") == 0
             or die "$0: failed to build container configuration\n";
     }

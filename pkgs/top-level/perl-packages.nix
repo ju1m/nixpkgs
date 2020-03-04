@@ -532,6 +532,21 @@ let
     };
   };
 
+  Applify = buildPerlPackage {
+    pname = "Applify";
+    version = "0.21";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/J/JH/JHTHORSEN/Applify-0.21.tar.gz";
+      sha256 = "e34bc64c12c42369af6db7d17e3e20059b9d97ed50f8e487bf610008525eb84d";
+    };
+    meta = {
+      homepage = "https://github.com/jhthorsen/applify";
+      description = "Write object oriented scripts with ease";
+      license = stdenv.lib.licenses.artistic2;
+      maintainers = [ maintainers.sgo ];
+    };
+  };
+
   Appperlbrew = buildPerlModule {
     pname = "App-perlbrew";
     version = "0.88";
@@ -3279,6 +3294,13 @@ let
       url = mirror://cpan/authors/id/A/AN/ANDK/CPAN-2.27.tar.gz;
       sha256 = "b4b1471a2881e2d616f59e723879b4110ae485b79d5962f115119c28cf69e07f";
     };
+    patches = [
+      (fetchpatch {
+        url = "https://patch-diff.githubusercontent.com/raw/andk/cpanpm/pull/133.diff";
+        name = "patch-YAML-modules-default-for-LoadBlessed-was-changed-to-false";
+        sha256 = "0i8648cwshzzd0b34gyfn68s1vs85d8336ggk2kl99awah1ydsfr";
+      })
+    ];
     propagatedBuildInputs = [ ArchiveZip CPANChecksums CPANPerlReleases Expect FileHomeDir LWP LogLog4perl ModuleBuild TermReadKey YAML YAMLLibYAML YAMLSyck ];
     meta = {
       description = "Query, download and build perl modules from CPAN sites";
@@ -3437,6 +3459,12 @@ let
       url = mirror://cpan/authors/id/A/AJ/AJGB/Crypt-Curve25519-0.06.tar.gz;
       sha256 = "1ir0gfxm8i7r9zyfs2zvil5jgwirl7j6cb9cm1p2kjpfnhyp0j4z";
     };
+    patches = [
+      (fetchpatch {
+        url = "https://gitweb.gentoo.org/repo/gentoo.git/plain/dev-perl/Crypt-Curve25519/files/Crypt-Curve25519-0.60.0-fmul-fixedvar.patch?id=cec727ad614986ca1e6b9468eea7f1a5a9183382";
+        sha256 = "0l005jzxp6q6vyl3p43ji47if0v9inscnjl0vxaqzf6c17akgbhf";
+      })
+    ];
     meta = {
       description = "Generate shared secret using elliptic-curve Diffie-Hellman function";
       license = with stdenv.lib.licenses; [ artistic1 gpl1Plus ];
@@ -3639,8 +3667,8 @@ let
       url = mirror://cpan/authors/id/T/TT/TTAR/Crypt-OpenSSL-AES-0.02.tar.gz;
       sha256 = "b66fab514edf97fc32f58da257582704a210c2b35e297d5c31b7fa2ffd08e908";
     };
-    NIX_CFLAGS_COMPILE = "-I${pkgs.openssl_1_0_2.dev}/include";
-    NIX_CFLAGS_LINK = "-L${pkgs.openssl_1_0_2.out}/lib -lcrypto";
+    NIX_CFLAGS_COMPILE = "-I${pkgs.openssl.dev}/include";
+    NIX_CFLAGS_LINK = "-L${pkgs.openssl.out}/lib -lcrypto";
     meta = with stdenv.lib; {
       description = "Perl wrapper around OpenSSL's AES library";
       license = with licenses; [ artistic1 gpl1Plus ];
@@ -3654,8 +3682,8 @@ let
       url = mirror://cpan/authors/id/K/KM/KMX/Crypt-OpenSSL-Bignum-0.09.tar.gz;
       sha256 = "1p22znbajq91lbk2k3yg12ig7hy5b4vy8igxwqkmbm4nhgxp4ki3";
     };
-    NIX_CFLAGS_COMPILE = "-I${pkgs.openssl_1_0_2.dev}/include";
-    NIX_CFLAGS_LINK = "-L${pkgs.openssl_1_0_2.out}/lib -lcrypto";
+    NIX_CFLAGS_COMPILE = "-I${pkgs.openssl.dev}/include";
+    NIX_CFLAGS_LINK = "-L${pkgs.openssl.out}/lib -lcrypto";
   };
 
   CryptOpenSSLGuess = buildPerlPackage {
@@ -3692,8 +3720,8 @@ let
       sha256 = "4173403ad4cf76732192099f833fbfbf3cd8104e0246b3844187ae384d2c5436";
     };
     propagatedBuildInputs = [ CryptOpenSSLRandom ];
-    NIX_CFLAGS_COMPILE = "-I${pkgs.openssl_1_0_2.dev}/include";
-    NIX_CFLAGS_LINK = "-L${pkgs.openssl_1_0_2.out}/lib -lcrypto";
+    NIX_CFLAGS_COMPILE = "-I${pkgs.openssl.dev}/include";
+    NIX_CFLAGS_LINK = "-L${pkgs.openssl.out}/lib -lcrypto";
     buildInputs = [ CryptOpenSSLGuess ];
   };
 
@@ -3756,7 +3784,7 @@ let
       url = mirror://cpan/authors/id/N/NA/NANIS/Crypt-SSLeay-0.72.tar.gz;
       sha256 = "1s7zm6ph37kg8jzaxnhi4ff4snxl7mi5h14arxbri0kp6s0lzlzm";
     };
-    makeMakerFlags = "--libpath=${pkgs.openssl_1_0_2.out}/lib --incpath=${pkgs.openssl_1_0_2.dev}/include";
+    makeMakerFlags = "--libpath=${pkgs.openssl.out}/lib --incpath=${pkgs.openssl.dev}/include";
     buildInputs = [ PathClass ];
     propagatedBuildInputs = [ LWPProtocolHttps ];
   };
@@ -9465,11 +9493,11 @@ let
   # TODO: use CPAN version
   ImageExifTool = buildPerlPackage {
     pname = "Image-ExifTool";
-    version = "11.70";
+    version = "11.85";
 
     src = fetchurl {
-      url = "https://www.sno.phy.queensu.ca/~phil/exiftool/Image-ExifTool-11.70.tar.gz";
-      sha256 = "1z0s0zvga24m9dzp1lnrsvwv9qmvn21ifd9in520sd54ld774ifp";
+      url = "https://exiftool.org/Image-ExifTool-11.85.tar.gz";
+      sha256 = "15zqm0ly2b3paqg0ym44ib2mvh6k18a9q5rvdirwipqa127al2lb";
     };
 
     nativeBuildInputs = stdenv.lib.optional stdenv.isDarwin shortenPerlShebang;
@@ -9479,7 +9507,7 @@ let
 
     meta = with stdenv.lib; {
       description = "A tool to read, write and edit EXIF meta information";
-      homepage = https://www.sno.phy.queensu.ca/~phil/exiftool/;
+      homepage = "https://exiftool.org/";
 
       longDescription = ''
         ExifTool is a platform-independent Perl library plus a command-line
@@ -9695,10 +9723,10 @@ let
 
   JSONValidator = buildPerlPackage {
     pname = "JSON-Validator";
-    version = "3.18";
+    version = "3.23";
     src = fetchurl {
-      url = mirror://cpan/authors/id/J/JH/JHTHORSEN/JSON-Validator-3.18.tar.gz;
-      sha256 = "a62474311b57c0a01ad06a5e340ec10d3723d74fd019304c769ffc7a61b5a47a";
+      url = "mirror://cpan/authors/id/J/JH/JHTHORSEN/JSON-Validator-3.23.tar.gz";
+      sha256 = "1fzy2z7mkg5vgcjvykh5ay8yg6q496wi14x9wp5hc9agplsq7f0s";
     };
     buildInputs = [ TestDeep ];
     propagatedBuildInputs = [ DataValidateDomain DataValidateIP Mojolicious NetIDNEncode YAMLLibYAML ];
@@ -9756,6 +9784,28 @@ let
     src = fetchurl {
       url = mirror://cpan/authors/id/M/MA/MARKOV/Object-Realize-Later-0.21.tar.gz;
       sha256 = "1nfqssld7pcdw9sj4mkfnh75w51wl14i1h7npj9fld4fri09cywg";
+    };
+  };
+
+  LaTeXML = buildPerlPackage {
+    pname = "LaTeXML";
+    version = "0.8.4";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/B/BR/BRMILLER/LaTeXML-0.8.4.tar.gz";
+      sha256 = "92599b45fb587ac14b2ba9cc84b85d9ddc2deaf1cbdc2e89e7a6559e1fbb34cc";
+    };
+    propagatedBuildInputs = [ ArchiveZip DBFile FileWhich IOString ImageSize JSONXS LWP ParseRecDescent TextUnidecode URI XMLLibXML XMLLibXSLT shortenPerlShebang ];
+    doCheck = false;  # epub test fails
+    postInstall = ''
+      shortenPerlShebang $out/bin/latexml
+      shortenPerlShebang $out/bin/latexmlc
+      shortenPerlShebang $out/bin/latexmlfind
+      shortenPerlShebang $out/bin/latexmlmath
+      shortenPerlShebang $out/bin/latexmlpost
+    '';
+    meta = {
+      description = "Transforms TeX and LaTeX into XML/HTML/MathML";
+      license = stdenv.lib.licenses.free;
     };
   };
 
@@ -11091,10 +11141,10 @@ let
 
   MathGMP = buildPerlPackage {
     pname = "Math-GMP";
-    version = "2.19";
+    version = "2.20";
     src = fetchurl {
-      url = mirror://cpan/authors/id/S/SH/SHLOMIF/Math-GMP-2.19.tar.gz;
-      sha256 = "1c07521m4d38hy2yx21hkwz22n2672bvrc4i21ldc68h85qy1q8i";
+      url = mirror://cpan/authors/id/S/SH/SHLOMIF/Math-GMP-2.20.tar.gz;
+      sha256 = "0psmpj3j8cw02b5bzb7qnkd4rcpxm82891rwpdi2hx2jxy0mznhn";
     };
     buildInputs = [ pkgs.gmp AlienGMP ];
     NIX_CFLAGS_COMPILE = "-I${pkgs.gmp.dev}/include";
@@ -13085,6 +13135,11 @@ let
       url = mirror://cpan/authors/id/A/AB/ABH/Mozilla-CA-20180117.tar.gz;
       sha256 = "f2cc9fbe119f756313f321e0d9f1fac0859f8f154ac9d75b1a264c1afdf4e406";
     };
+
+    postPatch = ''
+      ln -s --force ${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt lib/Mozilla/CA/cacert.pem
+    '';
+
     meta = {
       description = "Mozilla's CA cert bundle in PEM format";
       license = stdenv.lib.licenses.mpl20;
@@ -14023,6 +14078,22 @@ let
     };
   };
 
+  OpenAPIClient = buildPerlPackage rec {
+    pname = "OpenAPI-Client";
+    version = "0.24";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/J/JH/JHTHORSEN/OpenAPI-Client-0.24.tar.gz";
+      sha256 = "2420a2d1a9bc24a644c9ba12d77f1252ac2209ef0ac5a432153fe49c840faf28";
+    };
+    propagatedBuildInputs = [ JSONValidator MojoliciousPluginOpenAPI ];
+    meta = {
+      homepage = "https://github.com/jhthorsen/openapi-client";
+      description = "A client for talking to an Open API powered server";
+      license = stdenv.lib.licenses.artistic2;
+      maintainers = [ maintainers.sgo ];
+    };
+  };
+
   OpenGL = buildPerlPackage rec {
     pname = "OpenGL";
     version = "0.70";
@@ -14592,6 +14663,21 @@ let
     src = fetchurl {
       url = mirror://cpan/authors/id/S/SH/SHLOMIF/PerlIO-eol-0.17.tar.gz;
       sha256 = "1fayp27vcmypqyzcd4003036h3g5zy6jk1ia25frdca58pzcpk6f";
+    };
+  };
+
+  PerlIOgzip = buildPerlPackage {
+    pname = "PerlIO-gzip";
+    version = "0.20";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/N/NW/NWCLARK/PerlIO-gzip-0.20.tar.gz";
+      sha256 = "4848679a3f201e3f3b0c5f6f9526e602af52923ffa471a2a3657db786bd3bdc5";
+    };
+    buildInputs = [ pkgs.zlib ];
+    NIX_CFLAGS_LINK = "-L${pkgs.zlib.out}/lib -lz";
+    meta = {
+      description = "Perl extension to provide a PerlIO layer to gzip/gunzip";
+      license = with stdenv.lib.licenses; [ artistic1 gpl1Plus ];
     };
   };
 
@@ -19224,6 +19310,20 @@ let
       license = with stdenv.lib.licenses; [ artistic1 gpl1Plus ];
     };
     buildInputs = [ FileFindRule TestPod TestPodCoverage ];
+  };
+
+  TextLorem = buildPerlModule {
+    pname = "Text-Lorem";
+    version = "0.3";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/A/AD/ADEOLA/Text-Lorem-0.3.tar.gz";
+      sha256 = "64bb636fb21213101a646b414ecbdc1b55edf905cbcdc7f5d24774ec5061fe2d";
+    };
+    meta = {
+      description = "Generate random Latin looking text";
+      license = with stdenv.lib.licenses; [ artistic1 gpl1Plus ];
+      maintainers = [ maintainers.sgo ];
+    };
   };
 
   TestManifest = buildPerlPackage {
