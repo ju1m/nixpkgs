@@ -10,43 +10,41 @@ let
       description = "dataset/template options";
     };
 
-  # Default values from https://github.com/jimsalterjrs/sanoid/blob/master/sanoid.defaults.conf
-
   commonOptions = {
     hourly = mkOption {
       description = "Number of hourly snapshots.";
-      type = types.ints.unsigned;
-      default = 48;
+      type = with types; nullOr ints.unsigned;
+      default = null;
     };
 
     daily = mkOption {
       description = "Number of daily snapshots.";
-      type = types.ints.unsigned;
-      default = 90;
+      type = with types; nullOr ints.unsigned;
+      default = null;
     };
 
     monthly = mkOption {
       description = "Number of monthly snapshots.";
-      type = types.ints.unsigned;
-      default = 6;
+      type = with types; nullOr ints.unsigned;
+      default = null;
     };
 
     yearly = mkOption {
       description = "Number of yearly snapshots.";
-      type = types.ints.unsigned;
-      default = 0;
+      type = with types; nullOr ints.unsigned;
+      default = null;
     };
 
     autoprune = mkOption {
       description = "Whether to automatically prune old snapshots.";
-      type = types.bool;
-      default = true;
+      type = with types; nullOr bool;
+      default = null;
     };
 
     autosnap = mkOption {
       description = "Whether to automatically take snapshots.";
-      type = types.bool;
-      default = true;
+      type = with types; nullOr bool;
+      default = null;
     };
 
     settings = mkOption {
@@ -56,6 +54,7 @@ let
         for allowed values.
       '';
       type = datasetSettingsType;
+      default = {};
     };
   };
 
