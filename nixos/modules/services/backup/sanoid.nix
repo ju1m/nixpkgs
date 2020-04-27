@@ -58,19 +58,8 @@ let
     };
   };
 
-  commonConfig = config: {
-    settings = {
-      hourly = mkDefault config.hourly;
-      daily = mkDefault config.daily;
-      monthly = mkDefault config.monthly;
-      yearly = mkDefault config.yearly;
-      autoprune = mkDefault config.autoprune;
-      autosnap = mkDefault config.autosnap;
-    };
-  };
-
   datasetOptions = {
-    useTemplate = mkOption {
+    use_template = mkOption {
       description = "Names of the templates to use for this dataset.";
       type = (types.listOf (types.enum (attrNames cfg.templates))) // {
         description = "list of template names";
@@ -84,20 +73,17 @@ let
       default = false;
     };
 
-    processChildrenOnly = mkOption {
+    process_children_only = mkOption {
       description = "Whether to only snapshot child datasets if recursing.";
       type = types.bool;
       default = false;
     };
   };
 
-  datasetConfig = config: {
-    settings = {
-      use_template = mkDefault config.useTemplate;
-      recursive = mkDefault config.recursive;
-      process_children_only = mkDefault config.processChildrenOnly;
-    };
-  };
+  mkDefaultSettings = config:
+    mapAttrs (n: mkDefault)
+     (filterAttrs (n: v: n!="settings" && !hasPrefix "_" n)
+      config);
 
   # Extract pool names from configured datasets
   pools = unique (map (d: head (builtins.match "([^/]+).*" d)) (attrNames cfg.datasets));
@@ -136,7 +122,7 @@ in {
       datasets = mkOption {
         type = types.attrsOf (types.submodule ({ config, ... }: {
           options = commonOptions // datasetOptions;
-          config = mkMerge [ (commonConfig config) (datasetConfig config) ];
+          config.settings = mkDefaultSettings config;
         }));
         default = {};
         description = "Datasets to snapshot.";
@@ -145,7 +131,7 @@ in {
       templates = mkOption {
         type = types.attrsOf (types.submodule ({ config, ... }: {
           options = commonOptions;
-          config = commonConfig config;
+          config.settings = mkDefaultSettings config;
         }));
         default = {};
         description = "Templates for datasets.";

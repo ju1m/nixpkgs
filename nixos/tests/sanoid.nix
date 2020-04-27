@@ -33,7 +33,7 @@ in {
 
           autosnap = true;
         };
-        datasets."pool/test".useTemplate = [ "test" ];
+        datasets."pool/test".use_template = [ "test" ];
       };
 
       services.syncoid = {

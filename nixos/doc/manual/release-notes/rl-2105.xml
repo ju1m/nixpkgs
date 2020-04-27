@@ -539,6 +539,16 @@ self: super:
     </para>
    </listitem>
    <listitem>
+     <para>
+       <literal>services.sanoid.datasets.*.useTemplate</literal> has been renamed to
+       <literal>services.sanoid.datasets.*.use_template</literal> to match upstream name.
+     </para>
+     <para>
+       <literal>services.sanoid.datasets.*.processChildrenOnly</literal> has been renamed to
+       <literal>services.sanoid.datasets.*.process_children_only</literal> to match upstream name.
+     </para>
+   </listitem>
+   <listitem>
     <para>
      The setting <xref linkend="opt-services.redis.bind" /> defaults to <literal>127.0.0.1</literal> now, making Redis listen on the loopback interface only, and not all public network interfaces.
     </para>
