@@ -19,12 +19,12 @@ with lib;
 
 mkDerivation rec {
   pname = "telegram-desktop";
-  version = "1.9.21";
+  version = "2.1.0";
 
   # Telegram-Desktop with submodules
   src = fetchurl {
     url = "https://github.com/telegramdesktop/tdesktop/releases/download/v${version}/tdesktop-${version}-full.tar.gz";
-    sha256 = "1b7z68q2sb2y203nf4p6lmz72zkpi5gyv9ypqi5h99bm2j6bbyg1";
+    sha256 = "0l5917w90z9pg1al1hzcycb4yxv03vc88jg958ifl9nlvz1arll6";
   };
 
   postPatch = ''

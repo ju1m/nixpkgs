@@ -1,15 +1,25 @@
-{ stdenv, fetchFromGitHub, cmake }:
+{ stdenv, fetchFromGitHub, fetchpatch, cmake }:
 
 stdenv.mkDerivation rec {
   pname = "fmt";
-  version = "6.1.2";
+  version = "6.2.0";
 
   src = fetchFromGitHub {
     owner = "fmtlib";
     repo = "fmt";
     rev = version;
-    sha256 = "1ngb2fd7c2jnxi3x5kjgxmpixmyc737f77vibij43dl77ybiaihi";
+    sha256 = "1vr08a8q94j66gas7ddbpdbq72b2ikd0mkgd5zd3l63610n8qajs";
   };
+
+  patches = [
+    # Fix BC break breaking Kodi
+    # https://github.com/xbmc/xbmc/issues/17629
+    # https://github.com/fmtlib/fmt/issues/1620
+    (fetchpatch {
+      url = "https://github.com/fmtlib/fmt/commit/7d01859ef16e6b65bc023ad8bebfedecb088bf81.patch";
+      sha256 = "vdttRGgdltabeRAs4/z0BNtW2dLOhCxtXQFGVFKpEG0=";
+    })
+  ];
 
   outputs = [ "out" "dev" ];
 
@@ -28,8 +38,8 @@ stdenv.mkDerivation rec {
       fmt (formerly cppformat) is an open-source formatting library. It can be
       used as a fast and safe alternative to printf and IOStreams.
     '';
-    homepage = http://fmtlib.net/;
-    downloadPage = https://github.com/fmtlib/fmt/;
+    homepage = "http://fmtlib.net/";
+    downloadPage = "https://github.com/fmtlib/fmt/";
     maintainers = [ maintainers.jdehaas ];
     license = licenses.bsd2;
     platforms = platforms.all;

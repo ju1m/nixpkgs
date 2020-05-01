@@ -53,6 +53,9 @@ python3Packages.buildPythonApplication rec {
     echo 'Version: ${version}' >PKG-INFO
 
     sed -i 's/spec.add_external_build(cmd=cmd/spec.add_external_build(cmd="true"/g' setup.py
+
+    # fixing test
+    sed -i "s/invalid value for \"--verbosity\"/invalid value for \\\'--verbosity\\\'/" tests/system/cli/test_sync.py
   '';
 
   preBuild = ''
@@ -66,7 +69,7 @@ python3Packages.buildPythonApplication rec {
   '';
 
   meta = with stdenv.lib; {
-    homepage = https://github.com/pimutils/vdirsyncer;
+    homepage = "https://github.com/pimutils/vdirsyncer";
     description = "Synchronize calendars and contacts";
     maintainers = with maintainers; [ matthiasbeyer gebner ];
     license = licenses.mit;
