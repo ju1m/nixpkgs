@@ -6,13 +6,13 @@
 
 stdenv.mkDerivation rec {
   pname = "psi-plus";
-  version = "1.4.1086";
+  version = "1.4.1407";
 
   src = fetchFromGitHub {
     owner = "psi-plus";
     repo = "psi-plus-snapshots";
     rev = version;
-    sha256 = "0war4hbjs1m7ll6rvpl3lj44lb0p5fi0g2siinnxpjffz2ydi97p";
+    sha256 = "0gp5rk7km2fzw109wil6s9x49x5q1qbw9mnkjs58dpzvxn74ylhw";
   };
 
   cmakeFlags = [

@@ -2,13 +2,13 @@
 
 buildGoPackage rec {
   pname = "vault";
-  version = "1.4.0";
+  version = "1.4.2";
 
   src = fetchFromGitHub {
     owner = "hashicorp";
     repo = "vault";
     rev = "v${version}";
-    sha256 = "13ycg9shara4ycbi79wj28z6nimnsqgisbf35ca3q9w066ac0ja2";
+    sha256 = "0aschysngs6f50plqkqbnhgl6zryd0bpypr50zd45cgww7jvvqd4";
   };
 
   goPackagePath = "github.com/hashicorp/vault";
@@ -23,7 +23,7 @@ buildGoPackage rec {
   ];
 
   postInstall = ''
-    echo "complete -C $bin/bin/vault vault" > vault.bash
+    echo "complete -C $out/bin/vault vault" > vault.bash
     installShellCompletion vault.bash
   '';
 

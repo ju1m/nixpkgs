@@ -5,7 +5,7 @@
 
 python3Packages.buildPythonApplication rec {
   pname = "lexicon";
-  version = "3.3.17";
+  version = "3.3.26";
 
   propagatedBuildInputs = with python3Packages; [ requests tldextract future cryptography pyyaml boto3 zeep xmltodict beautifulsoup4 dnspython pynamecheap softlayer transip localzone ];
 
@@ -19,7 +19,7 @@ python3Packages.buildPythonApplication rec {
     owner = "AnalogJ";
     repo = pname;
     rev = "v${version}";
-    sha256 = "1wrsw759am6yp2m9b34iv82m371df3ssp2vhdjr18ys3xk7dvj89";
+    sha256 = "0k41l5n80hsfr0dkijf4hhkhz6iiwja4aj9q2jdiqsg9fjrmhfrv";
   };
 
   meta = with lib; {

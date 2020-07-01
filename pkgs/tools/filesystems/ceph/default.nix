@@ -93,7 +93,7 @@ let
   ]);
   sitePackages = ceph-python-env.python.sitePackages;
 
-  version = "14.2.8";
+  version = "14.2.9";
 in rec {
   ceph = stdenv.mkDerivation {
     pname = "ceph";
@@ -101,11 +101,17 @@ in rec {
 
     src = fetchurl {
       url = "http://download.ceph.com/tarballs/ceph-${version}.tar.gz";
-      sha256 = "0p7pjycqhxqg1mmix8ykx3xqq01d560p54iiidxps0rcvwfkyyki";
+      sha256 = "0zkh1a23v8g1fa5flqa2d53lv08ancab3li57gybpqpnja90k7il";
     };
 
     patches = [
       ./0000-fix-SPDK-build-env.patch
+      (fetchurl {
+        # Remove for Ceph > v15.2.3; https://www.openwall.com/lists/oss-security/2020/06/25/5
+        name = "CVE-2020-10753.patch";
+        url = "https://github.com/ceph/ceph/pull/35773/commits/1524d3c0c5cb11775313ea1e2bb36a93257947f2.patch";
+        sha256 = "1c04kirijp4c8a5pgwqx17dzdnzvd29nl2nr3qdvf4fkqwnlf48s";
+      })
     ];
 
     nativeBuildInputs = [

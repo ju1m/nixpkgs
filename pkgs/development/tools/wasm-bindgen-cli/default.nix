@@ -2,19 +2,19 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "wasm-bindgen-cli";
-  version = "0.2.61";
+  version = "0.2.64";
 
   src = fetchFromGitHub {
     owner = "rustwasm";
     repo = "wasm-bindgen";
     rev = version;
-    sha256 = "1lz4yscs17vix96isqpwwjhjcgj46zh2ljiwvfsk44wky8vwkyb7";
+    sha256 = "1h8sxa15v4l6m4b82p0rlg7ilzfjdz2x7lipampapb9yzn9c5dcs";
   };
 
   buildInputs = [ openssl ] ++ lib.optionals stdenv.isDarwin [ Security curl ];
   nativeBuildInputs = [ pkgconfig ];
 
-  cargoSha256 = "1vblvajhx5gn08rinv6bnw61zah62il015rzm0d4vs2b9p0iaann";
+  cargoSha256 = "1pynk2yisv6ryj1rlwx8bv6akjm39i3d6sd8f42b5v1w5vsg0nqm";
   cargoPatches = [ ./0001-Add-cargo.lock.patch ];
   cargoBuildFlags = [ "-p" pname ];
 

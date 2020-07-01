@@ -7,11 +7,11 @@
 
 stdenv.mkDerivation rec {
   pname = "postman";
-  version = "7.21.2";
+  version = "7.26.0";
 
   src = fetchurl {
     url = "https://dl.pstmn.io/download/version/${version}/linux64";
-    sha256 = "18lb8csfmy5j97zdg3c5l23aaw9hjg04qhfc1sz9pgi7xhwz5g1b";
+    sha256 = "05xs389bf0127n8rdivbfxvgjvlrk9pyr74klswwlksxciv74i3j";
     name = "${pname}.tar.gz";
   };
 
@@ -25,7 +25,7 @@ stdenv.mkDerivation rec {
     comment = "API Development Environment";
     desktopName = "Postman";
     genericName = "Postman";
-    categories = "Application;Development;";
+    categories = "Development;";
   };
 
   buildInputs = [
