@@ -39,7 +39,7 @@ in {
       services.syncoid = {
         enable = true;
         sshKey = "/var/lib/syncoid/id_ecdsa";
-        commonArgs = [ "--no-sync-snap" ];
+        commonArgs = [ "--no-sync-snap" "--create-bookmark" ];
         commands."pool/test".target = "root@target:pool/test";
       };
     };
@@ -80,7 +80,7 @@ in {
     source.systemctl("start --wait sanoid.service")
 
     target.wait_for_open_port(22)
-    source.systemctl("start --wait syncoid.service")
+    source.systemctl("start --wait syncoid-pool-test.service")
     target.succeed(
         "mkdir /tmp/mnt",
         "zfs set mountpoint=legacy pool/test",
