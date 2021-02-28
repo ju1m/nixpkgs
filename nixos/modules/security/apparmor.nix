@@ -30,16 +30,15 @@ in
         If you're enabling this module on a running system,
         note that a reboot will be required to activate AppArmor in the kernel.
 
-        Also, beware that enabling this module will by default
-        try to kill unconfined but confinable running processes,
-        in order to obtain a confinement matching what is declared in the NixOS configuration.
+        Also, beware that enabling this module privileges stability over security
+        by not trying to kill unconfined but newly confinable running processes by default,
+        which can happen because AppArmor can only confine new
+        or already confined processes of an executable.
         This will happen when upgrading to a NixOS revision
         introducing an AppArmor profile for the executable of a running process.
-        This is because enabling an AppArmor profile for an executable
-        can only confine new or already confined processes of that executable,
-        but leaves already running processes unconfined.
-        Set <link linkend="opt-security.apparmor.killUnconfinedConfinables">killUnconfinedConfinables</link>
-        to <literal>false</literal> if you prefer to leave those processes running'';
+
+        Enable <xref linkend="opt-security.apparmor.killUnconfinedConfinables"/>
+        if you want this service to send a </literal>SIGTERM</literal> to those running processes'';
       policies = mkOption {
         description = ''
           AppArmor policies.
@@ -78,10 +77,14 @@ in
         Beware that AppArmor policies almost always contain Nix store paths,
         and thus produce at each change of these paths
         a new cached version accumulating in the cache'';
-      killUnconfinedConfinables = mkDisableOption ''
+      killUnconfinedConfinables = mkEnableOption ''
         killing of processes which have an AppArmor profile enabled
-        (in <link linkend="opt-security.apparmor.policies">policies</link>)
+        (in <xref linkend="opt-security.apparmor.policies"/>)
         but are not confined (because AppArmor can only confine new processes).
+
+        This is only sending a gracious <literal>SIGTERM</literal> signal to the processes,
+        not a <literal>SIGKILL</literal>.
+
         Beware that due to a current limitation of AppArmor,
         only profiles with exact paths (and no name) can enable such kills'';
     };
