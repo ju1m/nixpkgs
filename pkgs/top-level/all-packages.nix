@@ -23775,6 +23775,8 @@ in
 
   magnetico = callPackage ../applications/networking/p2p/magnetico { };
 
+  mastodon-archive = callPackage ../applications/backup/mastodon-archive { };
+
   mastodon-bot = nodePackages.mastodon-bot;
 
   matchbox = callPackage ../applications/window-managers/matchbox { };
