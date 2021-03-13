@@ -4045,6 +4045,8 @@ in {
 
   mailman-web = callPackage ../servers/mail/mailman/web.nix { };
 
+  mastodon = callPackage ../development/python-modules/mastodon { };
+
   rtmixer = callPackage ../development/python-modules/rtmixer { };
 
   mail-parser = callPackage ../development/python-modules/mail-parser { };
