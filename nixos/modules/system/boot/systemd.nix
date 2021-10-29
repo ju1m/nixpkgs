@@ -1018,6 +1018,18 @@ in
           [Coredump]
           ${config.systemd.coredump.extraConfig}
         '';
+      # CORENAME_MAX_SIZE being only 128, overflowing happens
+      # when the Nix store path includes a cross-compiling suffix,
+      # hence this workaround to use a shorter path.
+      "systemd/coredump".source = "${systemd}/lib/systemd/systemd-coredump";
+      "sysctl.d/50-coredump.conf".source = pkgs.runCommand "50-coredump.conf" {
+          preferLocalBuild = true;
+          coredumpConf = "${systemd}/example/sysctl.d/50-coredump.conf";
+        } ''
+          substitute $coredumpConf $out \
+            --replace 'core_pattern=|${systemd}/lib/systemd/systemd-coredump' \
+                      'core_pattern=|/etc/systemd/coredump'
+        '';
 
       "systemd/logind.conf".text = ''
         [Login]
@@ -1034,7 +1046,6 @@ in
       '';
 
       # install provided sysctl snippets
-      "sysctl.d/50-coredump.conf".source = "${systemd}/example/sysctl.d/50-coredump.conf";
       "sysctl.d/50-default.conf".source = "${systemd}/example/sysctl.d/50-default.conf";
 
       "tmpfiles.d".source = (pkgs.symlinkJoin {
