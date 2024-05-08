@@ -66,6 +66,7 @@ let
         Group = config.users.groups."public-inbox".name;
         RuntimeDirectory = [
           "public-inbox-${srv}/perl-inline"
+          "confinement/public-inbox-${srv}"
         ];
         RuntimeDirectoryMode = "700";
         # This is for BindPaths= and BindReadOnlyPaths=
@@ -96,15 +97,23 @@ let
         DeviceAllow = "";
         LockPersonality = true;
         MemoryDenyWriteExecute = true;
+        MountAPIVFS = true;
         NoNewPrivileges = true;
         PrivateNetwork = mkDefault (!needNetwork);
+        PrivateDevices = true;
+        PrivateMounts = true;
+        PrivateTmp = true;
+        PrivateUsers = true;
         ProcSubset = "pid";
         ProtectClock = true;
+        ProtectControlGroups = true;
         ProtectHome = "tmpfs";
         ProtectHostname = true;
         ProtectKernelLogs = true;
+        ProtectKernelModules = true;
+        ProtectKernelTunables = true;
         ProtectProc = "invisible";
-        #ProtectSystem = "strict";
+        ProtectSystem = "strict";
         RemoveIPC = true;
         RestrictAddressFamilies =
           [ "AF_UNIX" ]
@@ -115,6 +124,9 @@ let
         RestrictNamespaces = true;
         RestrictRealtime = true;
         RestrictSUIDSGID = true;
+        RootDirectory = "/run/confinement/public-inbox-${srv}";
+        InaccessiblePaths = [ "-+/run/confinement/public-inbox-${srv}" ];
+        ReadOnlyPaths = [ "+/" ];
         SystemCallFilter = [
           "@system-service"
           "~@aio"
@@ -126,18 +138,6 @@ let
           # Not removing @timer because git upload-pack needs it.
         ];
         SystemCallArchitectures = "native";
-
-        # The following options are redundant when confinement is enabled
-        RootDirectory = "/var/empty";
-        TemporaryFileSystem = "/";
-        PrivateMounts = true;
-        MountAPIVFS = true;
-        PrivateDevices = true;
-        PrivateTmp = true;
-        PrivateUsers = true;
-        ProtectControlGroups = true;
-        ProtectKernelModules = true;
-        ProtectKernelTunables = true;
       };
       confinement = {
         # Until we agree upon doing it directly here in NixOS
