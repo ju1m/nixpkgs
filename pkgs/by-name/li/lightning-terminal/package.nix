@@ -64,6 +64,6 @@ buildGoModule rec {
     homepage = "https://github.com/lightninglabs/lightning-terminal";
     license = licenses.mit;
     maintainers = with maintainers; [ HannahMR ];
-    mainProgram = "litd";
+    mainProgram = "litcli";
   };
 }
