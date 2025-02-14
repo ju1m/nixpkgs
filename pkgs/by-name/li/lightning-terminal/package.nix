@@ -13,7 +13,19 @@ buildGoModule rec {
     owner = "lightninglabs";
     repo = "lightning-terminal";
     rev = "v${version}";
-    hash = "sha256-gGo9abd12zZPPTBkmEfB8BNK1ZVpea2uZNpeYRb5l00=";
+    hash = "sha256-rM+gKr05gwyEk9zeDXSRDiF0Jz0Z8Xf84C3oQwD5dJc=";
+    leaveDotGit = true;
+    # Populate values that require us to use git.
+    # Note that the commit hash of HEAD is correct
+    # even though deepClone=true is not used.
+    postFetch = ''
+      cd "$out"
+      >$out/COMMIT git rev-parse HEAD
+      >$out/LOOP_COMMIT sed -ne 's:^\s*github.com/lightninglabs/loop\s\(.*\):\1:p' go.mod
+      >$out/POOL_COMMIT sed -ne 's:^\s*github.com/lightninglabs/pool\s\(.*\):\1:p' go.mod
+      >$out/TAP_COMMIT sed -ne 's:^\s*github.com/lightninglabs/taproot-assets\s\(.*\):\1:p' go.mod
+      find -name .git -print0 | xargs -0 rm -rf
+    '';
   };
 
   app = mkYarnPackage {
@@ -26,17 +38,27 @@ buildGoModule rec {
   vendorHash = "sha256-MwVTmwOb0wW2e9lEbr/Pm2IhHXizwEgaw5j+x8+XA+E=";
 
   ldflags = [
-    "-s -w"
-    "-X github.com/lightningnetwork/lnd/build.Commit=b5117a483a8dd8418e28b87531f130655b990825"
-    "-X github.com/lightningnetwork/lnd/build.CommitHash=8bba79222f439127e46ec3ff7ec7c650e0d88d56"
-    "-X github.com/lightningnetwork/lnd/build.GoVersion=go1.22.3"
-    "-X github.com/lightningnetwork/lnd/build.RawTags=litd,autopilotrpc,signrpc,walletrpc,chainrpc,invoicesrpc,watchtowerrpc,neutrinorpc,peersrpc"
+    "-s"
+    "-w"
+    "-X github.com/lightningnetwork/lnd/build.GoVersion=${go.version}"
+    "-X github.com/lightningnetwork/lnd/build.RawTags=${lib.concatStringsSep "," tags}"
     "-X github.com/lightninglabs/lightning-terminal.appFilesPrefix="
-    "-X github.com/lightninglabs/lightning-terminal.Commit=b5117a483a8dd8418e28b87531f130655b990825"
-    "-X github.com/lightninglabs/loop.Commit=23b818e436ddf24013ad5a617a503801de53d783"
-    "-X github.com/lightninglabs/pool.Commit=e5d6a5ff0bc52df7a5b025b8098e709722a44d96"
-    "-X github.com/lightninglabs/taproot-assets.Commit=564795a0e4c1d1034493b498f58a552920f2e39c"
+    "-X github.com/lightninglabs/lightning-terminal.Commit=${src.rev}"
   ];
+
+  # ldflags based on metadata from git and source
+  preBuild = ''
+    # Note that src.rev is not lnd's commit hash, but lightning-terminal's,
+    # yet lightning-terminal's Makefile does pass lightning-terminal's commit hash for lnd.
+    ldflags+=" -X github.com/lightninglabs/loop.Commit=$(cat LOOP_COMMIT)"
+    ldflags+=" -X github.com/lightninglabs/pool.Commit=$(cat POOL_COMMIT)"
+    ldflags+=" -X github.com/lightninglabs/taproot-assets.Commit=$(cat TAP_COMMIT)"
+    # Note that this is build.Commit, not Commit,
+    # this may be why Makefile uses COMMIT and not LND_COMMIT here,
+    # so let's do the same.
+    ldflags+=" -X github.com/lightningnetwork/lnd/build.Commit=${src.rev}"
+    ldflags+=" -X github.com/lightningnetwork/lnd/build.CommitHash=$(cat COMMIT)"
+  '';
 
   subPackages = [ "cmd/litcli" "cmd/litd" ];
 
