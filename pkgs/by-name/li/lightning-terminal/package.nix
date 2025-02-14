@@ -1,15 +1,9 @@
 { lib
-, stdenv
 , fetchFromGitHub
-, fetchYarnDeps
 , mkYarnPackage
 , buildGoModule
-, nodejs
-, yarn
-, gnumake
 , go
-, git
-, fixup_yarn_lock
+, versionCheckHook
 }:
 
 buildGoModule rec {
