@@ -74,12 +74,18 @@ buildGoModule rec {
     "peersrpc"
   ];
 
-  meta = with lib; {
-    description =
-      "All-in-one Lightning node management tool that includes LND, Loop, Pool, Faraday, and Tapd.";
+  doInstallCheck = true;
+  versionCheckProgram = "${placeholder "out"}/bin/litcli";
+  versionCheckProgramArg = "--version";
+  nativeInstallCheckInputs = [
+    versionCheckHook
+  ];
+
+  meta = {
+    description = "All-in-one Lightning node management tool that includes LND, Loop, Pool, Faraday, and Tapd.";
     homepage = "https://github.com/lightninglabs/lightning-terminal";
-    license = licenses.mit;
-    maintainers = with maintainers; [ HannahMR ];
+    license =  lib.licenses.mit;
+    maintainers = with lib.maintainers; [ HannahMR ];
     mainProgram = "litcli";
   };
 }
