@@ -58,10 +58,6 @@ buildGoModule rec {
     "peersrpc"
   ];
 
-  postInstall = ''
-    cp -r $out/bin/* $out/
-  '';
-
   meta = with lib; {
     description =
       "All-in-one Lightning node management tool that includes LND, Loop, Pool, Faraday, and Tapd.";
