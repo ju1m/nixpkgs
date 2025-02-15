@@ -1,9 +1,10 @@
-{ lib
-, fetchFromGitHub
-, mkYarnPackage
-, buildGoModule
-, go
-, versionCheckHook
+{
+  lib,
+  fetchFromGitHub,
+  mkYarnPackage,
+  buildGoModule,
+  go,
+  versionCheckHook,
 }:
 
 buildGoModule rec {
@@ -59,7 +60,10 @@ buildGoModule rec {
     ldflags+=" -X github.com/lightningnetwork/lnd/build.CommitHash=$(cat COMMIT)"
   '';
 
-  subPackages = [ "cmd/litcli" "cmd/litd" ];
+  subPackages = [
+    "cmd/litcli"
+    "cmd/litd"
+  ];
 
   tags = [
     "litd"
@@ -83,7 +87,7 @@ buildGoModule rec {
   meta = {
     description = "All-in-one Lightning node management tool that includes LND, Loop, Pool, Faraday, and Tapd.";
     homepage = "https://github.com/lightninglabs/lightning-terminal";
-    license =  lib.licenses.mit;
+    license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ HannahMR ];
     mainProgram = "litcli";
   };
