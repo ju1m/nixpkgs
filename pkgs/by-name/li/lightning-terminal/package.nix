@@ -85,7 +85,7 @@ buildGoModule rec {
   ];
 
   meta = {
-    description = "All-in-one Lightning node management tool that includes LND, Loop, Pool, Faraday, and Tapd.";
+    description = "All-in-one Lightning node management tool that includes LND, Loop, Pool, Faraday, and Tapd";
     homepage = "https://github.com/lightninglabs/lightning-terminal";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ HannahMR ];
