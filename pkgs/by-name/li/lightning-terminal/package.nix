@@ -16,8 +16,6 @@ buildGoModule rec {
     hash = "sha256-sv/NsjAAF0vwD2xjRuGwHwV0L1gjCFQEw0SVp14Zyz0=";
     leaveDotGit = true;
     # Populate values that require us to use git.
-    # Note that the commit hash of HEAD is correct
-    # even though deepClone=true is not used.
     postFetch = ''
       cd "$out"
       >$out/COMMIT git rev-parse HEAD
@@ -28,6 +26,7 @@ buildGoModule rec {
     '';
   };
 
+  # TODO: see what to do with this
   app = mkYarnPackage {
     name = "lightning-app";
     src = "${src}/app";
