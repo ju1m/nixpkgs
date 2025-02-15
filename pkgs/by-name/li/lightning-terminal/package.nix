@@ -8,12 +8,12 @@
 
 buildGoModule rec {
   pname = "lightning-terminal";
-  version = "0.12.4-alpha";
+  version = "0.14.1-alpha";
   src = fetchFromGitHub {
     owner = "lightninglabs";
     repo = "lightning-terminal";
     rev = "v${version}";
-    hash = "sha256-rM+gKr05gwyEk9zeDXSRDiF0Jz0Z8Xf84C3oQwD5dJc=";
+    hash = "sha256-sv/NsjAAF0vwD2xjRuGwHwV0L1gjCFQEw0SVp14Zyz0=";
     leaveDotGit = true;
     # Populate values that require us to use git.
     # Note that the commit hash of HEAD is correct
@@ -35,7 +35,7 @@ buildGoModule rec {
     yarnLock = "${src}/app/yarn.lock";
   };
 
-  vendorHash = "sha256-MwVTmwOb0wW2e9lEbr/Pm2IhHXizwEgaw5j+x8+XA+E=";
+  vendorHash = "sha256-Gbx4uz6q9Ef4QNv6DpIoCACjhT66iZ7GPNpd/g9MgKQ=";
 
   ldflags = [
     "-s"
