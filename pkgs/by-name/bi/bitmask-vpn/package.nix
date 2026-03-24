@@ -27,7 +27,7 @@ buildGoModule (finalAttrs: {
     repo = "bitmask-vpn";
     rev = "8b3ac473f64b6de0262fbf945ff25af8029134f1";
     leaveDotGit = true;
-    sha256 = "sha256-XUgCVHnTLZXFU+r0s1yuYryWNBJRgQrFlf3g1iRrLWs=";
+    hash = "sha256-XUgCVHnTLZXFU+r0s1yuYryWNBJRgQrFlf3g1iRrLWs=";
   };
   vendorHash = null;
 
@@ -52,7 +52,7 @@ buildGoModule (finalAttrs: {
       --replace "provider = bitmask" "provider = ${provider}"
 
     substituteInPlace branding/templates/debian/app.desktop-template \
-      --replace "Icon=icon" "Icon=${finalAttrs.pname}"
+      --replace "Icon=icon" "Icon=${provider}-vpn"
 
     patchShebangs gui/build.sh
     wrapPythonProgramsIn branding/scripts
@@ -124,12 +124,12 @@ buildGoModule (finalAttrs: {
   '';
 
   postInstall = ''
-    install -m 755 -D -t $out/bin build/qt/release/${finalAttrs.pname}
+    install -m 755 -D -t $out/bin build/qt/release/${provider}-vpn
 
     VERSION=${finalAttrs.version} VENDOR_PATH=providers branding/scripts/generate-debian branding/templates/debian/data.json
     (cd branding/templates/debian && ${python3Packages.python}/bin/python3 generate.py)
-    install -m 444 -D branding/templates/debian/app.desktop $out/share/applications/${finalAttrs.pname}.desktop
-    install -m 444 -D providers/${provider}/assets/icon.svg $out/share/icons/hicolor/scalable/apps/${finalAttrs.pname}.svg
+    install -m 444 -D branding/templates/debian/app.desktop $out/share/applications/${provider}-vpn.desktop
+    install -m 444 -D providers/${provider}/assets/icon.svg $out/share/icons/hicolor/scalable/apps/${provider}-vpn.svg
   ''
   + lib.optionalString stdenv.hostPlatform.isLinux ''
     install -m 444 -D -t $out/share/polkit-1/actions ${finalAttrs.passthru.bitmask-root}/share/polkit-1/actions/se.leap.bitmask.policy
@@ -178,7 +178,7 @@ buildGoModule (finalAttrs: {
       a variety of trusted service provider all from one app.
       Current providers include Riseup Networks
       and The Calyx Institute, where the former is default.
-      The <literal>${finalAttrs.pname}</literal> executable should appear
+      The <literal>${provider}-vpn</literal> executable should appear
       in your desktop manager's XDG menu or could be launch in a terminal
       to get an execution log. A new icon should then appear in your systray
       to control the VPN and configure some options.
