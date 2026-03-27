@@ -1,4 +1,8 @@
 {
+  provider,
+}:
+
+{
   lib,
   stdenv,
   replaceVars,
@@ -15,7 +19,6 @@
   iptables,
   procps,
   qt6Packages,
-  provider ? "riseup",
 }:
 
 buildGoModule (finalAttrs: {

@@ -301,6 +301,8 @@ with pkgs;
     ];
   } ../build-support/setup-hooks/gog-unpack.sh;
 
+  bitmask-vpn = import ../tools/networking/bitmask-vpn/generic.nix;
+
   buildEnv = callPackage ../build-support/buildenv { }; # not actually a package
 
   buildFHSEnv = buildFHSEnvBubblewrap;

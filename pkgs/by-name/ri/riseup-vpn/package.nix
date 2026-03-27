@@ -1,7 +1,7 @@
 {
   bitmask-vpn,
+  callPackage,
 }:
-
-bitmask-vpn.override {
+callPackage (bitmask-vpn {
   provider = "riseup";
-}
+}) { }
